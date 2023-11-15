@@ -1,0 +1,1 @@
+la colisión con el lateral derecho no funciona cuando el shape es superior a 1
