@@ -7,7 +7,7 @@ const context = canvas.getContext('2d')
 //2.medidas del tetris
 
 const BLOCK_SIZE = 20
-const BOARD_WIDTH = 16
+const BOARD_WIDTH = 15
 const BOARD_HEIGHT = 31
 
 //3.Le ponemos esas medidas al canvass
@@ -54,11 +54,95 @@ const board = [
 ]
 
 //5. las piezas
-const piece = {
-    position: { x: 1, y: 0 },
+const currentPiece = {
+    position: { x: 0, y: 0 },
     shape: [
-        [1, 1, 1, 1]
+        [1,1,1,1]
+    ],
+    xSize: 4,
+    xSizes:  [4,1],
+    shapeForm:0,
+    shapes: [
+        [
+            [1,1,1,1]
+        ],
+        [
+            [1,0],
+            [1,0],
+            [1,0],
+            [1,0]
+        ]
     ]
+}
+
+
+
+//un array de  objetos, y en  cada objeto  un valor llamado shapes que tiene todas las  formas
+const pieces = 
+    {
+        shapes: [
+            [
+                [1,1,1,1]
+            ],
+            [
+                [1,0],
+                [1,0],
+                [1,0],
+                [1,0]
+            ]
+        ],
+        xSize:[4,1]
+    
+    }
+
+const putas = {
+    palitroker: {
+        shape:[1,1,1,1],
+        shapes: [
+            [
+                [1,1,1,1]
+            ],
+            [
+                [1,0],
+                [1,0],
+                [1,0],
+                [1,0]
+            ]
+        ],
+        xSize:[4,1],
+        shapeForm: 1,
+        shapeForms:2
+    },
+    star: {
+        shape:[
+            [0,1,0],
+            [1,1,1]
+        ],
+        shapes: [
+            [
+                [0,1,0],
+                [1,1,1]
+            ],
+            [
+                [0,1],
+                [1,1],
+                [0,1]
+            ],
+            [
+                [1,1,1],
+                [0,1,0]
+            ],
+            [
+                [1,0],
+                [1,1],
+                [1,0]
+            ]
+        ],
+        xSize:3,
+        xSizes:[3,2],
+        shapeForm:0,
+        shapeForms:4
+    }
 }
 
 
@@ -86,11 +170,11 @@ const draw = () => {
     })
 
     //mover la pieza
-    piece.shape.forEach((row, y) => {
+    currentPiece.shape.forEach((row, y) => {
         row.forEach((value, x) => {
             if (value) {
                 context.fillStyle = 'red'
-                context.fillRect(x + piece.position.x, y + piece.position.y, 1, 1)
+                context.fillRect(x + currentPiece.position.x, y + currentPiece.position.y, 1, 1)
             }
         })
     })
@@ -100,61 +184,69 @@ const draw = () => {
 document.addEventListener('keydown', event => {
     if (event.key === 'ArrowLeft') {
         console.log(checkingCollisions('left'))
-        if (checkingCollisions('left')) piece.position.x--
+        if (checkingCollisions('left')) {
+           const minX = currentPiece.position.x;
+           if (minX > 0) {
+            currentPiece.position.x--;
+           }
+        }
     }
 
     if (event.key === 'ArrowRight') {
-        console.log(checkingCollisions('right'))
-        if (checkingCollisions('right')) piece.position.x++
-
+        if (checkingCollisions('right')) {
+            const maxX = currentPiece.position.x + currentPiece.xSize;
+            console.log(currentPiece.position.x)
+            if (maxX < BOARD_WIDTH) {
+                currentPiece.position.x++;
+            }
+        } 
     }
+
     if (event.key === 'ArrowDown') {
         console.log(checkingCollisions('down'))
-        if (checkingCollisions('down')) piece.position.y++
-        console.log('posición y', piece.position.y)
+        if (checkingCollisions('down')) currentPiece.position.y++
+    }
+
+    if (event.key === 'ArrowUp') {
+        changingShape()
     }
 })
 
+// cambiar la posición de la pieza
+const changingShape =  () =>  {
+    
+
+     currentPiece.shapeForm = (currentPiece.shapeForm === 0) ? 
+    (currentPiece.shape = currentPiece.shapes[1], currentPiece.xSize = currentPiece.xSizes[1], 1) :
+    (currentPiece.shape = currentPiece.shapes[0], currentPiece.xSize = currentPiece.xSizes[0], 0);
+   
+    if (!checkingCollisions('down') && !checkingCollisions('right')) {
+        currentPiece.shapeForm = (currentPiece.shapeForm === 0) ? 
+    (currentPiece.shape = currentPiece.shapes[1], currentPiece.xSize = currentPiece.xSizes[1], 1) :
+    (currentPiece.shape = currentPiece.shapes[0], currentPiece.xSize = currentPiece.xSizes[0], 0);
+    }
+
+    
+                 
+}
+    
+
+
 
 // 8 colisiones
-const checkCollisions = () => { // devuelve true si hay colisión
-    let result = false
 
-    //colisiones con los bordes (falta probar con los diferentes tamaños de piezas)
-    if (
-        (piece.shape.length + 1) + piece.position.y > 32 ||
-        (piece.position.x + (piece.shape[0].length - 1)) > 15 ||
-        piece.position.x < 0
-    ) result = true
-
-    //colisiones con otras piezas
-    piece.shape.forEach((row, indexRow) => {
-        row.forEach((value, indexValue) => {
-            if (value == 1) {
-                console.log(board[piece.position.y + indexRow][piece.position.x + indexValue])
-                if (board[piece.position.y + indexRow][piece.position.x + indexValue] == 1) {
-                    result = true
-                    console.log(result)
-                }
-            }
-        })
-    })
-
-    return result
-
-}
 
 const checkingCollisions = (direction) => { // devuelve false  si hay colisión
     let result = true;
-    let directionValue = 0
-    let yValue = 0
+    let directionValue = 0;
+    let yValue = 0;
 
     switch (direction) {
         case 'left':
             directionValue = -1;
             break;
         case 'right':
-            directionValue = 0;
+            directionValue = 1;
             break;
         case 'down':
             yValue = 1;
@@ -162,27 +254,28 @@ const checkingCollisions = (direction) => { // devuelve false  si hay colisión
         // Puedes agregar más casos según sea necesario
     }
 
-    piece.shape.forEach((row, indexRow) => {
+    currentPiece.shape.forEach((row, indexRow) => {
         row.forEach((cellValue, indexValue) => {
-
-            if  (board[piece.position.y + indexRow + yValue]){
+            if (board[currentPiece.position.y + indexRow + yValue]) {
                 if (cellValue === 1) {
-                    const boardValue = board[piece.position.y + indexRow + yValue][piece.position.x + indexValue + directionValue];
-                    if (boardValue !== 0) {
+                    const boardValue = board[currentPiece.position.y + indexRow + yValue][currentPiece.position.x + indexValue + directionValue];
+                    if (boardValue !== 0 || currentPiece.position.x + indexValue + directionValue >= BOARD_WIDTH) {
                         result = false;
                     }
                 }
-            } else result  =  false
-            
+            } else {
+                result = false;
+            }
         });
     });
 
     return result;
 };
 
+
 // 9 pieza bajando cada segundo
 const pieceGoingDown = () => {
-    if (checkingCollisions('down')) piece.position.y++
+    if (checkingCollisions('down')) currentPiece.position.y++
     else solidify()
     
 
@@ -191,11 +284,11 @@ const pieceGoingDown = () => {
 
 //10 solidificar las  piezas 
 const solidify = () => {
-    console.log('solidifico')
-    piece.shape.forEach((row, indexRow) => {
+    console.log('solidifico', currentPiece.position.x)
+    currentPiece.shape.forEach((row, indexRow) => {
         row.forEach((value, indexValue) => {
             if (value == 1) {
-                board[piece.position.y + indexRow][piece.position.x + indexValue] = 1
+                board[currentPiece.position.y + indexRow][currentPiece.position.x + indexValue] = 1
                 pieceColor = 'yellow'
             }
         })
@@ -205,10 +298,9 @@ const solidify = () => {
 
 //11 crear la pieza post-solidificación
 const newPiece = () => {
-    console.log('reiniciando pieza')
-    piece.position.x = 0
-    piece.position.y = 0
-    console.log(piece.position.x)
+    
+    currentPiece.position.x = 0
+    currentPiece.position.y = 0
 
 }
 

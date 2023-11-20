@@ -1,30 +1,8 @@
-la colisión con el lateral derecho no funciona cuando el shape es superior a 1
 
+cambiar los  16 por board_width
+al cambiar de posición, tiene  que  checar colisiones
 
-const checkCollision = () => { // ésta función devuelve un array si encuentra una colisión
-    return piece.shape.find((row, y) => {
-        /*     if  (piece.position.y + piece.shape.length > 30) return true */
-        return row.find((value, x) => {
-            return ( // éste return devuelve undefined si no encuentra colisiones
-                board[piece.shape.length + piece.position.y] == undefined || // Verificar si la fila existe
-                board[y + piece.position.y][x + piece.position.x] !== 0
-            );
-        });
-    });
-};
-
-const checkCollisioners = () => {
-    const width = piece.shape[0].length + 1
-    const height = piece.shape.length + 1
-    let result = false
-
-    piece.shape.forEach((row, indexRow) => {
-        row.forEach((value, indexValue) => {
-            if (value == 1) {
-                if (board[piece.position.y + indexRow][piece.position.x + indexValue] == 1) result = true
-            }
-        })
-    })
-
-    return result
-}
+// lógica:
+Necesito una variable donde están almacenadas en todo momento los datos de  la pieza actual.
+al  solidificar, se  hace un random y se le asignan los datos de la pieza nueva
+ a la variable.
