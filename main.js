@@ -57,54 +57,36 @@ const board = [
 const currentPiece = {
     position: { x: 0, y: 0 },
     shape: [
-        [0, 1, 0],
-        [1, 1, 1]
+        [1, 1],
+        [0, 1],
+        [0, 1]
     ],
     shapes: [
         [
-            [0, 1, 0],
-            [1, 1, 1]
-        ],
-        [
-            [0, 1],
             [1, 1],
+            [0, 1],
             [0, 1]
         ],
         [
-            [1, 1, 1],
-            [0, 1, 0]
+            [0, 0, 1],
+            [1, 1, 1]
         ],
         [
             [1, 0],
-            [1, 1],
-            [1, 0]
+            [1, 0],
+            [1, 1]
+        ],
+        [
+            [1, 1, 1],
+            [1, 0, 0]
         ]
     ],
-    xSize: 3,
-    xSizes: [3, 2],
-    shapeForm: 0, //se refiere a que su forma está en esa posición del array shapes
+    xSize: 2,
+    xSizes: [2, 3],
+    shapeForm: 0,
     shapeForms: 4
 }
 
-
-
-//un array de  objetos, y en  cada objeto  un valor llamado shapes que tiene todas las  formas
-const pieces =
-{
-    shapes: [
-        [
-            [1, 1, 1, 1]
-        ],
-        [
-            [1, 0],
-            [1, 0],
-            [1, 0],
-            [1, 0]
-        ]
-    ],
-    xSize: [4, 1]
-
-}
 
 const putas = {
     palitroker: {
@@ -120,7 +102,8 @@ const putas = {
                 [1, 0]
             ]
         ],
-        xSize: [4, 1],
+        xSize: 4,
+        xSizes: [4, 1],
         shapeForm: 1,
         shapeForms: 2
     },
@@ -131,27 +114,57 @@ const putas = {
         ],
         shapes: [
             [
-                [0,0,0]
                 [0, 1, 0],
                 [1, 1, 1]
             ],
             [
-                [0, 1],
+                [1, 0],
                 [1, 1],
-                [0, 1]
+                [1, 0]
             ],
             [
                 [1, 1, 1],
                 [0, 1, 0]
             ],
             [
-                [1, 0],
+                [0, 1],
                 [1, 1],
-                [1, 0]
+                [0, 1]
             ]
         ],
         xSize: 3,
         xSizes: [3, 2],
+        shapeForm: 0,
+        shapeForms: 4
+    },
+    hook: {
+        shape: [
+            [1, 1],
+            [0, 1],
+            [0, 1]
+        ],
+        shapes: [
+            [
+                [1, 1],
+                [0, 1],
+                [0, 1]
+            ],
+            [
+                [0, 0, 1],
+                [1, 1, 1]
+            ],
+            [
+                [1, 0],
+                [1, 0],
+                [1, 1]
+            ],
+            [
+                [1, 1, 1],
+                [1, 0, 0]
+            ]
+        ],
+        xSize: 2,
+        xSizes: [2, 3],
         shapeForm: 0,
         shapeForms: 4
     }
@@ -207,7 +220,8 @@ document.addEventListener('keydown', event => {
     if (event.key === 'ArrowRight') {
         if (checkingCollisions('right')) {
             const maxX = currentPiece.position.x + currentPiece.xSize;
-            console.log(currentPiece.position.x)
+            console.log(currentPiece.position.x,'x coord')
+            console.log(currentPiece.xSize,'x size')
             if (maxX < BOARD_WIDTH) {
                 currentPiece.position.x++;
             }
@@ -226,9 +240,9 @@ document.addEventListener('keydown', event => {
 
 // cambiar la posición de la pieza
 const changingShape = () => {
-    
-    console.log(currentPiece.shapeForm,'sheipform')
-    if (currentPiece.shapeForms == 2) {
+
+    console.log(currentPiece.shapeForm, 'sheipform')
+    if (currentPiece.shapeForms == 2) { // aqui entra cuando solo tiene dos posiciones  posibles
         currentPiece.shapeForm = (currentPiece.shapeForm === 0) ?
             (currentPiece.shape = currentPiece.shapes[1], currentPiece.xSize = currentPiece.xSizes[1], 1) :
             (currentPiece.shape = currentPiece.shapes[0], currentPiece.xSize = currentPiece.xSizes[0], 0);
@@ -238,25 +252,21 @@ const changingShape = () => {
                 (currentPiece.shape = currentPiece.shapes[1], currentPiece.xSize = currentPiece.xSizes[1], 1) :
                 (currentPiece.shape = currentPiece.shapes[0], currentPiece.xSize = currentPiece.xSizes[0], 0);
         }
-    } else  {
+    } else {// aqui entra cuando tiene 4 posiciones posibles
+        console.log(currentPiece.shapes[currentPiece.shapeForm + 1],'sheip actual')
         currentPiece.shapeForm = (currentPiece.shapeForm === 3) ?
             (currentPiece.shape = currentPiece.shapes[0], currentPiece.xSize = currentPiece.xSizes[0], 0) :
-            (currentPiece.shape = currentPiece.shapes[currentPiece.shapeForm + 1], currentPiece.xSize = currentPiece.xSizes[1], currentPiece.shapeForm + 1);
-            if (!checkingCollisions('down') && !checkingCollisions('right')) {
-                currentPiece.position.x--
-                currentPiece.shape == currentPiece.shapes[0] ? currentPiece.shapes[3] :  currentPiece.shapes[currentPiece.shapeForm - 1]
-                console.log(currentPiece.shapeForm,'sheipform')
-                currentPiece.xSize = currentPiece.xSizes[1]
-                currentPiece.shapeForm = (currentPiece.shapeForm === 0) ? 3 : currentPiece.shapeForm - 1;
+            (currentPiece.shape = currentPiece.shapes[currentPiece.shapeForm + 1], currentPiece.xSize = (currentPiece.xSize == currentPiece.xSizes[0]) ? currentPiece.xSizes[1] : currentPiece.xSizes[0], currentPiece.shapeForm + 1);
+        if (!checkingCollisions('down') && !checkingCollisions('right')) {
+            console.log('colis')
+            currentPiece.position.x--
+            currentPiece.shape == currentPiece.shapes[0] ? currentPiece.shapes[3] : currentPiece.shapes[currentPiece.shapeForm - 1]
+            console.log(currentPiece.shapeForm, 'sheipform')
+            currentPiece.xSize = (currentPiece.xSize == currentPiece.xSizes[0]) ? currentPiece.xSizes[1] : currentPiece.xSizes[0]
+            currentPiece.shapeForm = (currentPiece.shapeForm === 0) ? 3 : currentPiece.shapeForm - 1;
 
-            }
+        }
     }
-
-
-
-
-
-
 }
 
 

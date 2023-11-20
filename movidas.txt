@@ -1,6 +1,6 @@
 
 cambiar los  16 por board_width
-al cambiar de posición, tiene  que  checar colisiones
+en el console log de sheip actual, hay un momento donde da undefined y no cambia la pieza
 
 // lógica:
 Necesito una variable donde están almacenadas en todo momento los datos de  la pieza actual.
