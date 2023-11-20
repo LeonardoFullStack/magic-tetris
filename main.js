@@ -57,91 +57,103 @@ const board = [
 const currentPiece = {
     position: { x: 0, y: 0 },
     shape: [
-        [1,1,1,1]
+        [0, 1, 0],
+        [1, 1, 1]
     ],
-    xSize: 4,
-    xSizes:  [4,1],
-    shapeForm:0,
     shapes: [
         [
-            [1,1,1,1]
+            [0, 1, 0],
+            [1, 1, 1]
         ],
         [
-            [1,0],
-            [1,0],
-            [1,0],
-            [1,0]
+            [0, 1],
+            [1, 1],
+            [0, 1]
+        ],
+        [
+            [1, 1, 1],
+            [0, 1, 0]
+        ],
+        [
+            [1, 0],
+            [1, 1],
+            [1, 0]
         ]
-    ]
+    ],
+    xSize: 3,
+    xSizes: [3, 2],
+    shapeForm: 0, //se refiere a que su forma está en esa posición del array shapes
+    shapeForms: 4
 }
 
 
 
 //un array de  objetos, y en  cada objeto  un valor llamado shapes que tiene todas las  formas
-const pieces = 
-    {
-        shapes: [
-            [
-                [1,1,1,1]
-            ],
-            [
-                [1,0],
-                [1,0],
-                [1,0],
-                [1,0]
-            ]
+const pieces =
+{
+    shapes: [
+        [
+            [1, 1, 1, 1]
         ],
-        xSize:[4,1]
-    
-    }
+        [
+            [1, 0],
+            [1, 0],
+            [1, 0],
+            [1, 0]
+        ]
+    ],
+    xSize: [4, 1]
+
+}
 
 const putas = {
     palitroker: {
-        shape:[1,1,1,1],
+        shape: [1, 1, 1, 1],
         shapes: [
             [
-                [1,1,1,1]
+                [1, 1, 1, 1]
             ],
             [
-                [1,0],
-                [1,0],
-                [1,0],
-                [1,0]
+                [1, 0],
+                [1, 0],
+                [1, 0],
+                [1, 0]
             ]
         ],
-        xSize:[4,1],
+        xSize: [4, 1],
         shapeForm: 1,
-        shapeForms:2
+        shapeForms: 2
     },
     star: {
-        shape:[
-            [0,1,0],
-            [1,1,1]
+        shape: [
+            [0, 1, 0],
+            [1, 1, 1]
         ],
         shapes: [
             [
-                [0,1,0],
-                [1,1,1]
+                [0,0,0]
+                [0, 1, 0],
+                [1, 1, 1]
             ],
             [
-                [0,1],
-                [1,1],
-                [0,1]
+                [0, 1],
+                [1, 1],
+                [0, 1]
             ],
             [
-                [1,1,1],
-                [0,1,0]
+                [1, 1, 1],
+                [0, 1, 0]
             ],
             [
-                [1,0],
-                [1,1],
-                [1,0]
+                [1, 0],
+                [1, 1],
+                [1, 0]
             ]
         ],
-        xSize:3,
-        xSizes:[3,2],
-        shapeForm:0,
-        shapeForms:4
+        xSize: 3,
+        xSizes: [3, 2],
+        shapeForm: 0,
+        shapeForms: 4
     }
 }
 
@@ -185,10 +197,10 @@ document.addEventListener('keydown', event => {
     if (event.key === 'ArrowLeft') {
         console.log(checkingCollisions('left'))
         if (checkingCollisions('left')) {
-           const minX = currentPiece.position.x;
-           if (minX > 0) {
-            currentPiece.position.x--;
-           }
+            const minX = currentPiece.position.x;
+            if (minX > 0) {
+                currentPiece.position.x--;
+            }
         }
     }
 
@@ -199,7 +211,7 @@ document.addEventListener('keydown', event => {
             if (maxX < BOARD_WIDTH) {
                 currentPiece.position.x++;
             }
-        } 
+        }
     }
 
     if (event.key === 'ArrowDown') {
@@ -213,23 +225,40 @@ document.addEventListener('keydown', event => {
 })
 
 // cambiar la posición de la pieza
-const changingShape =  () =>  {
+const changingShape = () => {
     
+    console.log(currentPiece.shapeForm,'sheipform')
+    if (currentPiece.shapeForms == 2) {
+        currentPiece.shapeForm = (currentPiece.shapeForm === 0) ?
+            (currentPiece.shape = currentPiece.shapes[1], currentPiece.xSize = currentPiece.xSizes[1], 1) :
+            (currentPiece.shape = currentPiece.shapes[0], currentPiece.xSize = currentPiece.xSizes[0], 0);
 
-     currentPiece.shapeForm = (currentPiece.shapeForm === 0) ? 
-    (currentPiece.shape = currentPiece.shapes[1], currentPiece.xSize = currentPiece.xSizes[1], 1) :
-    (currentPiece.shape = currentPiece.shapes[0], currentPiece.xSize = currentPiece.xSizes[0], 0);
-   
-    if (!checkingCollisions('down') && !checkingCollisions('right')) {
-        currentPiece.shapeForm = (currentPiece.shapeForm === 0) ? 
-    (currentPiece.shape = currentPiece.shapes[1], currentPiece.xSize = currentPiece.xSizes[1], 1) :
-    (currentPiece.shape = currentPiece.shapes[0], currentPiece.xSize = currentPiece.xSizes[0], 0);
+        if (!checkingCollisions('down') && !checkingCollisions('right')) {
+            currentPiece.shapeForm = (currentPiece.shapeForm === 0) ?
+                (currentPiece.shape = currentPiece.shapes[1], currentPiece.xSize = currentPiece.xSizes[1], 1) :
+                (currentPiece.shape = currentPiece.shapes[0], currentPiece.xSize = currentPiece.xSizes[0], 0);
+        }
+    } else  {
+        currentPiece.shapeForm = (currentPiece.shapeForm === 3) ?
+            (currentPiece.shape = currentPiece.shapes[0], currentPiece.xSize = currentPiece.xSizes[0], 0) :
+            (currentPiece.shape = currentPiece.shapes[currentPiece.shapeForm + 1], currentPiece.xSize = currentPiece.xSizes[1], currentPiece.shapeForm + 1);
+            if (!checkingCollisions('down') && !checkingCollisions('right')) {
+                currentPiece.position.x--
+                currentPiece.shape == currentPiece.shapes[0] ? currentPiece.shapes[3] :  currentPiece.shapes[currentPiece.shapeForm - 1]
+                console.log(currentPiece.shapeForm,'sheipform')
+                currentPiece.xSize = currentPiece.xSizes[1]
+                currentPiece.shapeForm = (currentPiece.shapeForm === 0) ? 3 : currentPiece.shapeForm - 1;
+
+            }
     }
 
-    
-                 
+
+
+
+
+
 }
-    
+
 
 
 
@@ -277,7 +306,7 @@ const checkingCollisions = (direction) => { // devuelve false  si hay colisión
 const pieceGoingDown = () => {
     if (checkingCollisions('down')) currentPiece.position.y++
     else solidify()
-    
+
 
     setTimeout(pieceGoingDown, 1000)
 }
@@ -298,7 +327,7 @@ const solidify = () => {
 
 //11 crear la pieza post-solidificación
 const newPiece = () => {
-    
+
     currentPiece.position.x = 0
     currentPiece.position.y = 0
 
